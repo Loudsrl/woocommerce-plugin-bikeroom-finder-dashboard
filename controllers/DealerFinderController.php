@@ -100,7 +100,18 @@ class DealerFinderController extends WP_REST_Controller {
 	 */
 	public function get_dealer( $request ) {
 		$current_user = wp_get_current_user();
-		return new WP_REST_Response( $current_user, 200 );
+		$user = $current_user->to_array();
+		$metas = get_user_meta($current_user->ID);
+		$meta = array();
+		foreach ($metas as $key => $value) {
+			if(!empty($value) && is_array($value) && count($value) == 1){
+				$meta[$key] = $value[0];
+			}else if(!empty($value)){
+				$meta[$key] = $value;
+			}
+		}
+		$user['meta'] = $meta;
+		return new WP_REST_Response( $user, 200 );
 	}
 
 	/**
@@ -335,6 +346,20 @@ class DealerFinderController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Check if a given request has access to get a specific item
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|bool
+	 */
+	public
+	function get_dealer_permissions_check(
+		$request
+	) {
+		return $this->get_items_permissions_check( $request );
+	}
+
+	/**
 	 * Check if a given request has access to edit a specific item
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -388,10 +413,32 @@ class DealerFinderController extends WP_REST_Controller {
 	function prepare_item_for_response(
 		$item, $request
 	) {
-		if ( ! empty( $item ) && $item instanceof WC_Product ) {
-			return $item;
-		}
+		if (!empty($item) && $item instanceof WC_Product) {
+			$data = $item->get_data();
+			$image = null;
+			if(!empty($data['image_id']) && ($img_id = intval($data['image_id'])) && ($img = wp_get_attachment_url($img_id))){
+				$image = $img;
+			}
+			$data['image'] = $image;
+			$gallery = array();
+			if (!empty($data['gallery_image_ids']) && is_array($data['gallery_image_ids']) && ($imgs = $data['gallery_image_ids'])) {
+				foreach ($imgs as $img) {
+					if(!empty($img) && ($img_id = intval($img)) && ($url = wp_get_attachment_url($img_id))){
+						array_push($gallery, $url);
+					}
+				}
+			}
+			$data['gallery'] = $gallery;
+			$attributes = $item->get_attributes();
+			$atts = array();
+			foreach ($attributes as $key => $value) {
+				$atts[$key] = $value->get_data();
+				$atts[$key]['options'] = $value->get_terms();
+			}
+			$data['attributes'] = $atts;
 
+			return $data;
+		}
 		return null;
 	}
 
