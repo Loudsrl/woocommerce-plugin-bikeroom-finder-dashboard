@@ -109,11 +109,12 @@ class BrandsFinderController extends WP_REST_Controller {
 		if ($item instanceof WP_Term) {
 			$metas = get_term_meta($item->term_id);
 			$meta = [];
+			// dd($metas);
 			foreach($metas as $key => $val) {
 				$v = $val;
 				if(strpos($key, "image") !== false || strpos($key, "logo") !== false) {
-					if ($id = intval($v)) {
-						$v = wp_get_attachment_url($v);
+					if (is_array($v) && count($v) > 0 && ($id = intval($v[0]))) {
+						$v = wp_get_attachment_url($id);
 					}
 				}
 				$meta[$key] = $v;
