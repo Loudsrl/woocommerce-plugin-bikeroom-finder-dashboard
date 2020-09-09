@@ -84,7 +84,7 @@ class BrandsFinderController extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'create_product' );
+		return current_user_can( 'edit_products' );
 	}
 
 	/**
