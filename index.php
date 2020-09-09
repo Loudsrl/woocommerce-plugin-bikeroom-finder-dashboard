@@ -15,8 +15,8 @@ add_filter('woocommerce_product_data_store_cpt_get_products_query', 'filter_prod
 
 function finder_api_init() {
 	include_once __DIR__ . "/controllers/BrandsFinderController.php";
-	include_once __DIR__ . "/controllers/BrandsFinderController.php";
-	include_once __DIR__ . "/controllers/BrandsFinderController.php";
+	include_once __DIR__ . "/controllers/ProductsFinderController.php";
+	include_once __DIR__ . "/controllers/DealerFinderController.php";
 	(new BrandsFinderController())->register_routes();
 	(new ProductsFinderController())->register_routes();
 	(new DealerFinderController())->register_routes();
