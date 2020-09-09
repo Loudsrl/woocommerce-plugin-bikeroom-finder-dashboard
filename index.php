@@ -22,7 +22,7 @@ function finder_api_init() {
 	(new DealerFinderController())->register_routes();
 }
 
-function filter_products_of_brand($query, $query_vars) {
+function filter_products_by_brand_and_author($query, $query_vars) {
 	if (!empty($query_vars['brand_ids'])) {
 		$query['tax_query'][] = array(
 			'taxonomy' => 'brand',
@@ -36,5 +36,3 @@ function filter_products_of_brand($query, $query_vars) {
 	}
 	return $query;
 }
-
-
