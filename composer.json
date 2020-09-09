@@ -1,0 +1,13 @@
+{
+  "name": "woocommerce-finder-dashboard-plugin",
+  "authors": [
+    {
+      "name": "LOUD s.r.l",
+      "email": "hello@loudsrl.com"
+    }
+  ],
+  "type": "wordpress-plugin",
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}
