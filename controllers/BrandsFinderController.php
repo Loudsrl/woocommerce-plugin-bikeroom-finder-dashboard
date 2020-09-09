@@ -2,7 +2,7 @@
 
 
 class BrandsFinderController extends WP_REST_Controller {
-	public string $taxonomy = 'brand';
+	public $taxonomy = 'brand';
 	/**
 	 * Register the routes for the objects of the controller.
 	 */
