@@ -89,7 +89,7 @@ class ProductsFinderController extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'create_product' );
+		return current_user_can( 'edit_products' );
 	}
 
 	/**
@@ -112,7 +112,30 @@ class ProductsFinderController extends WP_REST_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 		if (!empty($item) && $item instanceof WC_Product) {
-			return $item;
+			$data = $item->get_data();
+			$image = null;
+			if(!empty($data['image_id']) && ($img_id = intval($data['image_id'])) && ($img = wp_get_attachment_url($img_id))){
+				$image = $img;
+			}
+			$data['image'] = $image;
+			$gallery = array();
+			if (!empty($data['gallery_image_ids']) && is_array($data['gallery_image_ids']) && ($imgs = $data['gallery_image_ids'])) {
+				foreach ($imgs as $img) {
+					if(!empty($img) && ($img_id = intval($img)) && ($url = wp_get_attachment_url($img_id))){
+						array_push($gallery, $url);
+					}
+				}
+			}
+			$data['gallery'] = $gallery;
+			$attributes = $item->get_attributes();
+			$atts = array();
+			foreach ($attributes as $key => $value) {
+				$atts[$key] = $value->get_data();
+				$atts[$key]['options'] = $value->get_terms();
+			}
+			$data['attributes'] = $atts;
+
+			return $data;
 		}
 		return null;
 	}
