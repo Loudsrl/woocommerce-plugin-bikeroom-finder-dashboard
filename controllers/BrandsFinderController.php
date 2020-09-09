@@ -112,7 +112,9 @@ class BrandsFinderController extends WP_REST_Controller {
 			foreach($metas as $key => $val) {
 				$v = $val;
 				if(strpos($key, "image") !== false || strpos($key, "logo") !== false) {
-					$v = wp_get_attachment_url($v);
+					if ($id = intval($v)) {
+						$v = wp_get_attachment_url($v);
+					}
 				}
 				$meta[$key] = $v;
 			}
