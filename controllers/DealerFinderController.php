@@ -268,6 +268,7 @@ class DealerFinderController extends WP_REST_Controller
         $pid = $product->save();
         wp_set_post_terms($pid, $brand_term[0]->term_id, 'brand');
         wp_set_post_terms($pid, $condition_term->term_id, 'condition');
+        wp_set_post_terms($pid, $parent_id, 'parent_group_id');
 
         $children_products = $parent_product->get_children();
         array_push($children_products, $pid);
@@ -485,6 +486,9 @@ class DealerFinderController extends WP_REST_Controller
                 $atts[$key]['options'] = $value->get_terms();
             }
             $data['attributes'] = $atts;
+            if($parent_id = get_post_meta($data["id"], "parent_group_id", true)) {
+                $data["parent_product"] = $this->prepare_item_for_response(wc_get_product($parent_id), $request);
+            }
 
             return $data;
         }
